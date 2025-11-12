@@ -1,0 +1,586 @@
+import React, { useState } from 'react';
+import { Home, Activity, User, LogOut, Upload, FileText, AlertCircle, CheckCircle } from 'lucide-react';
+
+// Main App Component
+function App() {
+  const [currentPage, setCurrentPage] = useState('home');
+  const [userRole, setUserRole] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUserRole(null);
+    setCurrentPage('home');
+  };
+
+  const renderPage = () => {
+    switch (currentPage) {
+      case 'home':
+        return <HomePage setCurrentPage={setCurrentPage} />;
+      case 'login':
+        return <LoginPage setCurrentPage={setCurrentPage} setUserRole={setUserRole} setIsLoggedIn={setIsLoggedIn} />;
+      case 'patient-dashboard':
+        return <PatientDashboard />;
+      case 'doctor-dashboard':
+        return <DoctorDashboard />;
+      default:
+        return <HomePage setCurrentPage={setCurrentPage} />;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      {/* Navbar */}
+      {isLoggedIn && (
+        <nav className="bg-white shadow-md">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              <div className="flex items-center space-x-2">
+                <Activity className="w-8 h-8 text-blue-600" />
+                <span className="text-xl font-bold text-gray-800">HealthAI</span>
+              </div>
+              <div className="flex items-center space-x-4">
+                <button
+                  onClick={() => setCurrentPage(userRole === 'patient' ? 'patient-dashboard' : 'doctor-dashboard')}
+                  className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition"
+                >
+                  <Home className="w-5 h-5" />
+                  <span>Dashboard</span>
+                </button>
+                <div className="flex items-center space-x-2 px-3 py-1 bg-blue-50 rounded-full">
+                  <User className="w-4 h-4 text-blue-600" />
+                  <span className="text-sm font-medium text-gray-700 capitalize">{userRole}</span>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center space-x-1 text-red-600 hover:text-red-700 transition"
+                >
+                  <LogOut className="w-5 h-5" />
+                  <span>Logout</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </nav>
+      )}
+
+      {/* Main Content */}
+      <main>
+        {renderPage()}
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-gray-800 text-white py-6 mt-12">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <p className="text-sm">© 2024 AI-Integrated Health Monitoring System</p>
+          <p className="text-xs mt-2 text-gray-400">Bridging healthcare gaps in rural India</p>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+// Home Page Component
+function HomePage({ setCurrentPage }) {
+  return (
+    <div className="max-w-7xl mx-auto px-4 py-16">
+      <div className="text-center">
+        <div className="flex justify-center mb-6">
+          <Activity className="w-20 h-20 text-blue-600" />
+        </div>
+        <h1 className="text-5xl font-bold text-gray-900 mb-4">
+          AI-Integrated Remote Health Monitoring
+        </h1>
+        <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+          Bridging healthcare gaps in rural India through AI-driven analysis and remote doctor consultation.
+          Upload test results, get instant AI recommendations, and connect with qualified doctors.
+        </p>
+
+        <button
+          onClick={() => setCurrentPage('login')}
+          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-lg shadow-lg transition transform hover:scale-105"
+        >
+          Get Started
+        </button>
+
+        {/* Features */}
+        <div className="grid md:grid-cols-3 gap-8 mt-16">
+          <div className="bg-white p-6 rounded-xl shadow-md">
+            <Upload className="w-12 h-12 text-blue-600 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Upload Test Results</h3>
+            <p className="text-gray-600 text-sm">PHC staff can easily upload patient vitals and test results</p>
+          </div>
+          <div className="bg-white p-6 rounded-xl shadow-md">
+            <Activity className="w-12 h-12 text-green-600 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold mb-2">AI Analysis</h3>
+            <p className="text-gray-600 text-sm">Get instant AI-powered health recommendations and risk assessment</p>
+          </div>
+          <div className="bg-white p-6 rounded-xl shadow-md">
+            <User className="w-12 h-12 text-purple-600 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Doctor Consultation</h3>
+            <p className="text-gray-600 text-sm">Remote doctors review AI suggestions and provide expert advice</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Login Page Component
+function LoginPage({ setCurrentPage, setUserRole, setIsLoggedIn }) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [role, setRole] = useState('patient');
+
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+    setUserRole(role);
+    setCurrentPage(role === 'patient' ? 'patient-dashboard' : 'doctor-dashboard');
+  };
+
+  return (
+    <div className="max-w-md mx-auto px-4 py-16">
+      <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div className="text-center mb-8">
+          <Activity className="w-16 h-16 text-blue-600 mx-auto mb-4" />
+          <h2 className="text-3xl font-bold text-gray-900">Welcome Back</h2>
+          <p className="text-gray-600 mt-2">Login to access your dashboard</p>
+        </div>
+
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Login As</label>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="patient">Patient / PHC Staff</option>
+              <option value="doctor">Doctor</option>
+            </select>
+          </div>
+
+          <button
+            onClick={handleLogin}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition"
+          >
+            Login
+          </button>
+        </div>
+
+        <div className="mt-6 text-center">
+          <button
+            onClick={() => setCurrentPage('home')}
+            className="text-blue-600 hover:text-blue-700 text-sm"
+          >
+            ← Back to Home
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Patient Dashboard Component
+function PatientDashboard() {
+  const [formData, setFormData] = useState({
+    patientName: '',
+    age: '',
+    bp: '',
+    sugar: '',
+    cholesterol: '',
+    heartRate: '',
+  });
+  const [aiResult, setAiResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const analyzeData = () => {
+    // Simulated AI analysis
+    const bp = parseInt(formData.bp.split('/')[0]) || 120;
+    const sugar = parseInt(formData.sugar) || 100;
+    const cholesterol = parseInt(formData.cholesterol) || 180;
+    const heartRate = parseInt(formData.heartRate) || 75;
+
+    let risk = 'low';
+    let recommendations = [];
+    let conditions = [];
+
+    if (bp > 140) {
+      risk = 'high';
+      conditions.push('Hypertension');
+      recommendations.push('Reduce salt intake and monitor blood pressure regularly');
+    }
+    if (sugar > 180) {
+      risk = 'high';
+      conditions.push('Diabetes');
+      recommendations.push('Consult endocrinologist, control sugar intake');
+    } else if (sugar > 125) {
+      risk = 'medium';
+      conditions.push('Pre-diabetes');
+      recommendations.push('Monitor glucose levels, maintain healthy diet');
+    }
+    if (cholesterol > 240) {
+      risk = risk === 'low' ? 'medium' : 'high';
+      conditions.push('High Cholesterol');
+      recommendations.push('Reduce fatty foods, increase exercise');
+    }
+    if (heartRate > 100) {
+      risk = risk === 'low' ? 'medium' : 'high';
+      conditions.push('Elevated Heart Rate');
+      recommendations.push('Check for cardiac issues, reduce stress');
+    }
+
+    if (conditions.length === 0) {
+      conditions.push('Normal Health Indicators');
+      recommendations.push('Maintain current healthy lifestyle');
+      recommendations.push('Regular check-ups recommended');
+    }
+
+    return { risk, conditions, recommendations };
+  };
+
+  const handleSubmit = () => {
+    if (!formData.patientName || !formData.age || !formData.bp || !formData.sugar || !formData.cholesterol || !formData.heartRate) {
+      alert('Please fill in all fields');
+      return;
+    }
+
+    setLoading(true);
+
+    // Simulate API call delay
+    setTimeout(() => {
+      const analysis = analyzeData();
+      setAiResult(analysis);
+      setLoading(false);
+    }, 1500);
+  };
+
+  const getRiskColor = (risk) => {
+    switch (risk) {
+      case 'high': return 'text-red-600 bg-red-50 border-red-200';
+      case 'medium': return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+      default: return 'text-green-600 bg-green-50 border-green-200';
+    }
+  };
+
+  return (
+    <div className="max-w-5xl mx-auto px-4 py-8">
+      <div className="mb-8">
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">Patient Dashboard</h2>
+        <p className="text-gray-600">Upload patient test data and get AI-powered health analysis</p>
+      </div>
+
+      <div className="grid lg:grid-cols-2 gap-8">
+        {/* Input Form */}
+        <div className="bg-white rounded-xl shadow-lg p-6">
+          <h3 className="text-xl font-semibold mb-4 flex items-center">
+            <Upload className="w-5 h-5 mr-2 text-blue-600" />
+            Enter Patient Data
+          </h3>
+
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Patient Name</label>
+              <input
+                name="patientName"
+                value={formData.patientName}
+                onChange={handleChange}
+                placeholder="Enter patient name"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Age</label>
+              <input
+                name="age"
+                type="number"
+                value={formData.age}
+                onChange={handleChange}
+                placeholder="Age"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Blood Pressure (mmHg)</label>
+              <input
+                name="bp"
+                value={formData.bp}
+                onChange={handleChange}
+                placeholder="e.g., 120/80"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Sugar Level (mg/dL)</label>
+              <input
+                name="sugar"
+                type="number"
+                value={formData.sugar}
+                onChange={handleChange}
+                placeholder="e.g., 100"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Cholesterol (mg/dL)</label>
+              <input
+                name="cholesterol"
+                type="number"
+                value={formData.cholesterol}
+                onChange={handleChange}
+                placeholder="e.g., 180"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Heart Rate (bpm)</label>
+              <input
+                name="heartRate"
+                type="number"
+                value={formData.heartRate}
+                onChange={handleChange}
+                placeholder="e.g., 75"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <button
+              onClick={handleSubmit}
+              disabled={loading}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition disabled:bg-gray-400"
+            >
+              {loading ? 'Analyzing...' : 'Analyze with AI'}
+            </button>
+          </div>
+        </div>
+
+        {/* AI Results */}
+        <div className="bg-white rounded-xl shadow-lg p-6">
+          <h3 className="text-xl font-semibold mb-4 flex items-center">
+            <Activity className="w-5 h-5 mr-2 text-green-600" />
+            AI Health Analysis
+          </h3>
+
+          {!aiResult && !loading && (
+            <div className="text-center py-12 text-gray-400">
+              <FileText className="w-16 h-16 mx-auto mb-4 opacity-50" />
+              <p>Enter patient data and click "Analyze" to see AI recommendations</p>
+            </div>
+          )}
+
+          {loading && (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto"></div>
+              <p className="mt-4 text-gray-600">Analyzing patient data...</p>
+            </div>
+          )}
+
+          {aiResult && (
+            <div className="space-y-4">
+              {/* Risk Level */}
+              <div className={`p-4 rounded-lg border-2 ${getRiskColor(aiResult.risk)}`}>
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold">Risk Level:</span>
+                  <span className="uppercase font-bold">{aiResult.risk}</span>
+                </div>
+              </div>
+
+              {/* Detected Conditions */}
+              <div>
+                <h4 className="font-semibold text-gray-700 mb-2 flex items-center">
+                  <AlertCircle className="w-4 h-4 mr-2" />
+                  Detected Conditions:
+                </h4>
+                <div className="space-y-2">
+                  {aiResult.conditions.map((condition, idx) => (
+                    <div key={idx} className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                      {condition}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Recommendations */}
+              <div>
+                <h4 className="font-semibold text-gray-700 mb-2 flex items-center">
+                  <CheckCircle className="w-4 h-4 mr-2" />
+                  AI Recommendations:
+                </h4>
+                <div className="space-y-2">
+                  {aiResult.recommendations.map((rec, idx) => (
+                    <div key={idx} className="bg-blue-50 p-3 rounded-lg border border-blue-200 text-sm">
+                      • {rec}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-yellow-50 border border-yellow-200 p-3 rounded-lg text-sm">
+                <strong>Note:</strong> This is an AI preliminary analysis. A qualified doctor will review this case and provide final consultation.
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Doctor Dashboard Component
+function DoctorDashboard() {
+  const [patients, setPatients] = useState([
+    {
+      id: 1,
+      name: 'Ramesh Kumar',
+      age: 58,
+      bp: '160/100',
+      sugar: '220',
+      cholesterol: '245',
+      aiRisk: 'high',
+      aiSuggestion: 'Possible hypertension and diabetes. Immediate medical attention recommended.',
+      doctorAdvice: '',
+    },
+    {
+      id: 2,
+      name: 'Sita Devi',
+      age: 45,
+      bp: '120/80',
+      sugar: '95',
+      cholesterol: '180',
+      aiRisk: 'low',
+      aiSuggestion: 'Normal readings. Maintain healthy lifestyle.',
+      doctorAdvice: '',
+    },
+    {
+      id: 3,
+      name: 'Anil Sharma',
+      age: 62,
+      bp: '145/95',
+      sugar: '135',
+      cholesterol: '210',
+      aiRisk: 'medium',
+      aiSuggestion: 'Borderline high BP and pre-diabetes. Lifestyle modifications needed.',
+      doctorAdvice: '',
+    },
+  ]);
+
+  const handleAdviceChange = (id, advice) => {
+    setPatients(patients.map(p => p.id === id ? { ...p, doctorAdvice: advice } : p));
+  };
+
+  const handleSubmitAdvice = (id) => {
+    alert(`Advice submitted for patient ID ${id}`);
+  };
+
+  const getRiskBadge = (risk) => {
+    const colors = {
+      high: 'bg-red-100 text-red-800 border-red-300',
+      medium: 'bg-yellow-100 text-yellow-800 border-yellow-300',
+      low: 'bg-green-100 text-green-800 border-green-300',
+    };
+    return colors[risk] || colors.low;
+  };
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="mb-8">
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">Doctor Dashboard</h2>
+        <p className="text-gray-600">Review patient data, AI analysis, and provide expert medical advice</p>
+      </div>
+
+      <div className="grid gap-6">
+        {patients.map((patient) => (
+          <div key={patient.id} className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition">
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <h3 className="text-xl font-bold text-gray-900">{patient.name}</h3>
+                <p className="text-gray-600">Age: {patient.age} years</p>
+              </div>
+              <span className={`px-3 py-1 rounded-full text-sm font-semibold border ${getRiskBadge(patient.aiRisk)}`}>
+                {patient.aiRisk.toUpperCase()} RISK
+              </span>
+            </div>
+
+            {/* Vitals */}
+            <div className="grid grid-cols-3 gap-4 mb-4">
+              <div className="bg-gray-50 p-3 rounded-lg">
+                <p className="text-xs text-gray-600 mb-1">Blood Pressure</p>
+                <p className="font-semibold text-lg">{patient.bp} mmHg</p>
+              </div>
+              <div className="bg-gray-50 p-3 rounded-lg">
+                <p className="text-xs text-gray-600 mb-1">Sugar Level</p>
+                <p className="font-semibold text-lg">{patient.sugar} mg/dL</p>
+              </div>
+              <div className="bg-gray-50 p-3 rounded-lg">
+                <p className="text-xs text-gray-600 mb-1">Cholesterol</p>
+                <p className="font-semibold text-lg">{patient.cholesterol} mg/dL</p>
+              </div>
+            </div>
+
+            {/* AI Analysis */}
+            <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg mb-4">
+              <p className="text-sm font-semibold text-blue-900 mb-2 flex items-center">
+                <Activity className="w-4 h-4 mr-2" />
+                AI Analysis:
+              </p>
+              <p className="text-sm text-blue-800">{patient.aiSuggestion}</p>
+            </div>
+
+            {/* Doctor's Advice */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Your Medical Advice:
+              </label>
+              <textarea
+                value={patient.doctorAdvice}
+                onChange={(e) => handleAdviceChange(patient.id, e.target.value)}
+                placeholder="Add your professional medical advice and treatment recommendations..."
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 resize-none"
+                rows="3"
+              />
+              <button
+                onClick={() => handleSubmitAdvice(patient.id)}
+                className="mt-3 bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg transition"
+              >
+                Submit Advice
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default App;
