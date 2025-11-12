@@ -5,7 +5,7 @@ npm run build
 git init
 git add .
 git commit -m "Initial commit"
-git remote add origin https://github.com/YOUR_USERNAME/ai-healthcare.git
+git remote add origin https://github.com/dubeyaditya350-hash/ai-healthcare.git
 git push -u origin main
 
 # 3. Deploy on Vercel
